@@ -6,12 +6,17 @@ from shot import Shot
 
 from constants import *
 
+import random
+
 class Player(CircleShape):
     def __init__(self,x,y):
         super().__init__(x,y,PLAYER_RADIUS)
         self.position = pygame.Vector2(x,y)
         self.rotation = 0
         self.timer = 0
+        self.iframes = 0
+        self.lives = 3
+        self.hit = 0
     
     # in the player class
     def triangle(self):
@@ -23,13 +28,21 @@ class Player(CircleShape):
         return [a, b, c]
     
     def draw(self,screen):
-        pygame.draw.polygon(surface=screen,color=(255,255,255),points=self.triangle(),width=2)
+        if self.hit == 1 and random.randint(0,10) > 5:
+            pygame.draw.polygon(surface=screen,color=(10,10,10),points=self.triangle(),width=2)
+        else:
+            pygame.draw.polygon(surface=screen,color=(255,255,255),points=self.triangle(),width=2)
 
     def rotate(self,dt):
         self.rotation += PLAYER_TURN_SPEED * dt
 
     def update(self, dt):
         self.timer -= dt
+        self.iframes -= dt
+        if self.iframes > 0:
+            self.hit = 1
+        else:
+            self.hit = 0
         keys = pygame.key.get_pressed()
         if keys[pygame.K_s]:
             self.move(-abs(dt))
@@ -50,3 +63,7 @@ class Player(CircleShape):
     def shoot(self):
         shot = Shot(self.position[0],self.position[1])
         shot.velocity = pygame.Vector2(0,1).rotate(self.rotation) * PLAYER_SHOOT_SPEED
+
+    def get_hit(self):
+        self.lives -= 1
+        self.iframes = PLAYER_FRAMES

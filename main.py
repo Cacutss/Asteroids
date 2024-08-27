@@ -4,11 +4,14 @@ from player import Player
 from asteroid import Asteroid
 from asteroidfield import AsteroidField
 from shot import Shot
+from score import Score
 
 def main():
-    pygame.init
+    pygame.init()
+    pygame.font.init()
     clock = pygame.time.Clock()
     dt = 0
+    score = Score()
     drawable = pygame.sprite.Group()
     updatable = pygame.sprite.Group()
     asteroids = pygame.sprite.Group()
@@ -25,19 +28,24 @@ def main():
             if event.type == pygame.QUIT:
                 return
         pygame.Surface.fill(screen,(0,0,0))
+        print(player.hit)
+        points = score.render(f"{score.points}",True,(100,100,100))
+        screen.blit(points,(SCREEN_WIDTH - score.get_height(),0))
+        if player.lives == 0:
+            print("!GAME OVER!")
+            exit()
         for thing in updatable:
             thing.update(dt)
         for thing in drawable:
             thing.draw(screen)
         for asteroid in asteroids:
-            if asteroid.CheckCollision(player):
-                print("!GAME OVER!")
-                exit()
+            if asteroid.CheckCollision(player) and player.iframes <= 0:
+                player.get_hit()
             for shot in shots:
                 if shot.CheckCollision(asteroid):
+                    score.points += 1
                     shot.kill()
                     asteroid.split()
-
         pygame.display.flip()
         dt = (clock.tick(60)) / 1000
 

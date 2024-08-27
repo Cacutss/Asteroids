@@ -33,7 +33,7 @@ end
 # Unset irrelevant variables.
 deactivate nondestructive
 
-set -gx VIRTUAL_ENV "/home/cactus/Codigo/github.com/Cacutss/pygame/venv"
+set -gx VIRTUAL_ENV "/home/cactus/Codigo/github.com/Cacutss/asteroids/venv"
 
 set -gx _OLD_VIRTUAL_PATH $PATH
 set -gx PATH "$VIRTUAL_ENV/bin" $PATH
