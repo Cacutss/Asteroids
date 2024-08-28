@@ -28,7 +28,6 @@ def main():
             if event.type == pygame.QUIT:
                 return
         pygame.Surface.fill(screen,(0,0,0))
-        print(player.hit)
         points = score.render(f"{score.points}",True,(100,100,100))
         screen.blit(points,(SCREEN_WIDTH - score.get_height(),0))
         if player.lives == 0:
@@ -38,6 +37,8 @@ def main():
             thing.update(dt)
         for thing in drawable:
             thing.draw(screen)
+        for i in range(0,player.lives):
+            screen.blit(pygame.font.Font(None,150).render(f"\n",True,(200,200,200)),(i*50,0))
         for asteroid in asteroids:
             if asteroid.CheckCollision(player) and player.iframes <= 0:
                 player.get_hit()
