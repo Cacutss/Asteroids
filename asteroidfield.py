@@ -39,7 +39,7 @@ class AsteroidField(pygame.sprite.Sprite):
             asteroid.velocity = velocity / 2
             big = 0
         asteroid = Asteroid(position.x, position.y, radius)
-        asteroid.velocity = velocity
+        asteroid.velocity = velocity 
 
     def update(self, dt):
         self.spawn_timer += dt
@@ -48,7 +48,7 @@ class AsteroidField(pygame.sprite.Sprite):
 
             # spawn a new asteroid at a random edge
             edge = random.choice(self.edges)
-            speed = random.randint(40, 100)
+            speed = random.randint(100, 250)
             velocity = edge[0] * speed
             velocity = velocity.rotate(random.randint(-30, 30))
             position = edge[1](random.uniform(0, 1))

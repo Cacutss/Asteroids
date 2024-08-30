@@ -18,6 +18,7 @@ def main():
     clock = pygame.time.Clock()
     dt = 0
     score = Score()
+    hearth = pygame.transform.scale(pygame.image.load("images/hearth.png"),(100,100))
     drawable = pygame.sprite.Group()
     updatable = pygame.sprite.Group()
     asteroids = pygame.sprite.Group()
@@ -37,7 +38,8 @@ def main():
                 return
         pygame.Surface.fill(screen,(15,15,15))
         points = score.render(f"{score.points}",True,(100,100,100))
-        screen.blit(points,(SCREEN_WIDTH - score.get_height(),0))
+        psize = points.get_size()
+        screen.blit(points,(SCREEN_WIDTH - psize[0],0))
         if player.lives == 0:
             print("!GAME OVER!")
             exit()
@@ -46,7 +48,7 @@ def main():
         for thing in drawable:
             thing.draw(screen)
         for i in range(0,player.lives):
-            screen.blit(pygame.font.Font(None,150).render(f"\n",True,(200,200,200)),(i*50,0))
+            screen.blit(hearth,(i*100,0,0,0))
         for asteroid in asteroids:
             if asteroid.CheckCollision(player) and player.iframes <= 0:
                 player.get_hit()

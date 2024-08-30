@@ -12,6 +12,7 @@ class Player(CircleShape):
     def __init__(self,x,y):
         super().__init__(x,y,PLAYER_RADIUS)
         self.position = pygame.Vector2(x,y)
+        self.acceleration = PLAYER_ACCELERATION
         self.rotation = 0
         self.timer = 0
         self.iframes = 0
@@ -48,17 +49,23 @@ class Player(CircleShape):
             self.move(-abs(dt))
         if keys[pygame.K_w]:
             self.move(dt)
+        else:
+            self.acceleration = PLAYER_ACCELERATION
         if keys[pygame.K_a]:
             self.rotate(-abs(dt))
         if keys[pygame.K_d]:
-            self.rotate(dt) 
+            self.rotate(dt)
         if keys[pygame.K_SPACE] and self.timer <= 0:
             self.shoot()
             self.timer = PLAYER_SHOOT_COOLDOWN
     
     def move(self,dt):
         movement = pygame.Vector2(0,1).rotate(self.rotation)
-        self.position += movement * PLAYER_SPEED * dt
+        self.position += (movement * PLAYER_SPEED * dt) * self.acceleration
+        if self.acceleration > PLAYER_MAX_ACCELERATION:
+            return
+        else:  
+            self.acceleration += 0.001 
 
     def shoot(self):
         shot = Shot(self.position[0],self.position[1])
@@ -66,4 +73,5 @@ class Player(CircleShape):
 
     def get_hit(self):
         self.lives -= 1
+        self.acceleration = 0.5
         self.iframes = PLAYER_FRAMES
