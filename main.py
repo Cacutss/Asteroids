@@ -6,10 +6,15 @@ from asteroidfield import AsteroidField
 from shot import Shot
 from score import Score
 from particles import Particles
+import os
+import sys
+
 
 def main():
+    pygame.mixer.pre_init()
     pygame.init()
     pygame.font.init()
+    pygame.mixer.init()
     clock = pygame.time.Clock()
     dt = 0
     score = Score()
@@ -30,7 +35,7 @@ def main():
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 return
-        pygame.Surface.fill(screen,(0,0,0))
+        pygame.Surface.fill(screen,(15,15,15))
         points = score.render(f"{score.points}",True,(100,100,100))
         screen.blit(points,(SCREEN_WIDTH - score.get_height(),0))
         if player.lives == 0:
@@ -48,12 +53,15 @@ def main():
             for shot in shots:
                 if shot.CheckCollision(asteroid):
                     explosion = Particles(asteroid.position[0],asteroid.position[1],asteroid.radius,pygame.image.load("images/explosion.png"))
+                    sfx = pygame.mixer.Sound("sounds/explosion.mp3")
+                    sfx.set_volume(float(asteroid.radius / 200))
+                    sfx.play()
                     explosion.draw(screen)
                     score.points += 1
                     shot.kill()
                     asteroid.split()
         pygame.display.flip()
         dt = (clock.tick(60)) / 1000
-
+    
 if __name__ == "__main__":
     main()
