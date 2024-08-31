@@ -18,7 +18,7 @@ class Player(CircleShape):
         self.iframes = 0
         self.lives = 3
         self.hit = 0
-    
+        self.hitbox = self.triangle()
     # in the player class
     def triangle(self):
         forward = pygame.Vector2(0, 1).rotate(self.rotation)
@@ -37,7 +37,19 @@ class Player(CircleShape):
     def rotate(self,dt):
         self.rotation += PLAYER_TURN_SPEED * dt
 
+    def CheckCollision(self, entity):
+        lista = []
+        for i in range(0,len(self.hitbox)):
+            if pygame.math.Vector2.distance_to(self.hitbox[i],entity.position) < entity.radius:
+                lista.append(True)
+            else:
+                lista.append(False)
+        if not any(lista):
+            return True
+        return False
+
     def update(self, dt):
+        self.hitbox = (self.triangle())
         self.timer -= dt
         self.iframes -= dt
         if self.iframes > 0:
