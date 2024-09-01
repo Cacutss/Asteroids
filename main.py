@@ -41,7 +41,6 @@ def main():
     field = AsteroidField()
     player = Player(x = SCREEN_WIDTH/2,y = SCREEN_HEIGHT/2)
     screen = pygame.display.set_mode(size=(SCREEN_WIDTH,SCREEN_HEIGHT))
-    boss = Boss()
     while(loop):
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
