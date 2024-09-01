@@ -7,6 +7,7 @@ from shot import Shot
 from score import Score
 from particles import Particles
 from boss import Boss
+from timer import Timer
 from wrapper import wrap
 import random
 
@@ -18,6 +19,7 @@ def main():
     pygame.font.init()
     pygame.mixer.init()
     pygame.mixer.set_num_channels(64)
+    game_timer = Timer()
     clock = pygame.time.Clock()
     dt = 0
     score = Score()
@@ -35,9 +37,11 @@ def main():
     Shot.containers = (shots,drawable,updatable)
     Particles.containers = (drawable,updatable)
     Boss.containers = (drawable,updatable,bosses,asteroids)
+    Timer.containers = (drawable,updatable)
     field = AsteroidField()
     player = Player(x = SCREEN_WIDTH/2,y = SCREEN_HEIGHT/2)
     screen = pygame.display.set_mode(size=(SCREEN_WIDTH,SCREEN_HEIGHT))
+    boss = Boss()
     while(loop):
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
@@ -45,9 +49,11 @@ def main():
         if score.points >= 100:
             loop = False
         pygame.Surface.fill(screen,(15,15,15))
-        points = score.render(f"{score.points}",True,(100,100,100))
+        points = score.draw()
         psize = points.get_size()
         screen.blit(points,(SCREEN_WIDTH - psize[0],0))
+        game_timer.update(dt)
+        game_timer.draw(screen)
         if player.lives == 0:
             print("!GAME OVER!")
             exit()

@@ -40,7 +40,7 @@ class Player(CircleShape):
     def CheckCollision(self, entity):
         lista = []
         for i in range(0,len(self.hitbox)):
-            if pygame.math.Vector2.distance_to(self.hitbox[i],entity.position) < entity.radius:
+            if pygame.math.Vector2.distance_to(self.hitbox[i],entity.position) < entity.radius - 2:
                 lista.append(True)
             else:
                 lista.append(False)
@@ -49,7 +49,7 @@ class Player(CircleShape):
         return False
 
     def update(self, dt):
-        self.hitbox = (self.triangle())
+        self.hitbox = self.triangle()
         self.timer -= dt
         self.iframes -= dt
         if self.iframes > 0:
