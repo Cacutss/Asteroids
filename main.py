@@ -45,8 +45,6 @@ def main():
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 return
-        if score.points >= 100:
-            loop = False
         pygame.Surface.fill(screen,(15,15,15))
         points = score.draw()
         psize = points.get_size()
@@ -55,9 +53,12 @@ def main():
         game_timer.draw(screen)
         if player.lives == 0:
             print("!GAME OVER!")
-            exit()
+            quit()
         for thing in updatable:
-            thing.update(dt)
+            if isinstance(thing,AsteroidField):
+                thing.update(dt,game_timer.time)
+            else:
+                thing.update(dt)
         for thing in wrappable:
             wrap(thing)
         for thing in drawable:
@@ -78,7 +79,7 @@ def main():
                         sfx.set_volume(float(asteroid.radius / 300))
                         sfx.play()
                         explosion.draw(screen)
-                        score.points += 1
+                        score.update(asteroid)
                         shot.kill()
                         asteroid.split()
         pygame.display.flip()

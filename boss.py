@@ -4,7 +4,7 @@ from asteroid import Asteroid
 
 class Boss(Asteroid):
     def __init__(self,x = SCREEN_WIDTH/2, y = -SCREEN_WIDTH/2, radius = SCREEN_WIDTH/2, lifes = 100,color = (240,0,0)):
-        super().__init__(x,y,radius,lifes,color)
+        super().__init__(x,y,radius,lifes,kind=2)
         self.speed = 20
 
     def draw(self,screen):

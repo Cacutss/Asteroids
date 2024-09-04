@@ -1,4 +1,4 @@
-#!/home/cactus/Codigo/github.com/Cacutss/pygame/venv/bin/python3
+#!/home/cactus/Codigo/github.com/Cacutss/asteroids/venv/bin/python3
 # -*- coding: utf-8 -*-
 import re
 import sys
