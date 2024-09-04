@@ -54,15 +54,10 @@ def main():
         if player.lives == 0:
             print("!GAME OVER!")
             quit()
-        for thing in updatable:
-            if isinstance(thing,AsteroidField):
-                thing.update(dt,game_timer.time)
-            else:
-                thing.update(dt)
+        update(updatable,dt,game_timer)
+        draw(drawable,screen)
         for thing in wrappable:
             wrap(thing)
-        for thing in drawable:
-            thing.draw(screen)
         for i in range(0,player.lives):
             screen.blit(hearth,(i*100,0,0,0))
         for asteroid in asteroids:
@@ -76,14 +71,26 @@ def main():
                     else:
                         explosion = Particles(asteroid.position[0],asteroid.position[1],asteroid.radius,pygame.image.load("images/explosion.png"))
                         sfx = pygame.mixer.Sound("sounds/explosion.mp3")
-                        sfx.set_volume(float(asteroid.radius / 300))
+                        sfx.set_volume(float(asteroid.radius / 500))
                         sfx.play()
+                        sfx.fadeout(1000)
                         explosion.draw(screen)
                         score.update(asteroid)
                         shot.kill()
                         asteroid.split()
         pygame.display.flip()
         dt = (clock.tick(60)) / 1000
-        
+
+def draw(drawable,screen):
+    for thing in drawable:
+        thing.draw(screen)
+
+def update(updatable,dt,timer):
+     for thing in updatable:
+        if isinstance(thing,AsteroidField):
+            thing.update(dt,timer.seconds)
+        else:
+            thing.update(dt)
+
 if __name__ == "__main__":
     main()

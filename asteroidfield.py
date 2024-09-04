@@ -39,7 +39,7 @@ class AsteroidField(pygame.sprite.Sprite):
             asteroid.velocity = velocity / 2
         x,y = self.set_good_spawn(position.x,position.y,radius)
         asteroid = Asteroid(x,y,radius)
-        if random.randint(0,100)* (timer-10) > 50:
+        if random.randint(0,100) + (timer * 0.01) > 90:
             asteroid.velocity = velocity * 5
             asteroid.type = 1
         else:

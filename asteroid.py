@@ -14,11 +14,12 @@ class Asteroid(CircleShape):
         self.timer = 1
         self.type = kind
         self.color = (255,255,255)
+        self.width = 2
         self.lifes = lifes
         self.hit = -1
 
     def draw(self,screen):
-        pygame.draw.circle(surface=screen,color=self.color,radius=self.radius,width=2,center=self.position)
+        pygame.draw.circle(surface=screen,color=self.color,radius=self.radius,width=self.width,center=self.position)
     
     def update(self,dt):
         match(self.type):
@@ -31,10 +32,8 @@ class Asteroid(CircleShape):
         if self.hit >= 0:
             self.color = (100,100,100)
         self.position += self.velocity * dt
-        if self.timer > 0:
-            self.timer -= dt
-        if self.hit > 0:
-            self.hit -= dt
+        self.timer -= dt
+        self.hit -= dt
 
     def get_hit(self):
         self.hit = 0.4
@@ -50,6 +49,10 @@ class Asteroid(CircleShape):
             new_radius = self.radius / 2 
             new1 = Asteroid(self.position[0],self.position[1],new_radius,kind=self.type)
             new2 = Asteroid(self.position[0],self.position[1],new_radius,kind=self.type)
-            new1.velocity = velocity1 * 2
-            new2.velocity = velocity2 * 2
+            if self.type == 1:
+                new1.velocity = velocity1 * 1.1
+                new2.velocity = velocity2 * 1.1
+            else:
+                new1.velocity = velocity1 * 2
+                new2.velocity = velocity2 * 2
         
