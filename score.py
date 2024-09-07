@@ -4,12 +4,17 @@ from asteroid import Asteroid
 
 class Score(pygame.font.Font):
     def __init__(self):
-        super().__init__("fonts/Retro Gaming.ttf",100)
+        if hasattr(self,"containers"):
+            super().__init__("fonts/Retro Gaming.ttf",50,self.containers)
+        else:
+            super().__init__("fonts/Retro Gaming.ttf",50)
         self.points = 0
         self.cache = 0
     
-    def draw(self):
-        return self.render(f"{self.points}",True,(100,100,100))
+    def draw(self,screen):
+        points = self.render(f"${self.points}",True,(100,100,100))
+        psize = points.get_size()
+        screen.blit(points,(SCREEN_WIDTH - psize[0],0))
     
     def update(self,asteroid:Asteroid):
         if asteroid.radius <= ASTEROID_MIN_RADIUS:

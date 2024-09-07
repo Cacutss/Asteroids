@@ -12,6 +12,7 @@ class Asteroid(CircleShape):
     def __init__(self,x,y,radius,lifes = 0,kind = 0):
         super().__init__(x,y,radius)
         self.timer = 1
+        self.rotation = 0
         self.type = kind
         self.color = (255,255,255)
         self.width = 2
@@ -19,9 +20,10 @@ class Asteroid(CircleShape):
         self.hit = -1
 
     def draw(self,screen):
-        pygame.draw.circle(surface=screen,color=self.color,radius=self.radius,width=self.width,center=self.position)
+        pygame.draw.circle(surface=screen,color=self.color,radius=self.radius,center=self.position,width=self.width)
     
     def update(self,dt):
+        self.rotation += ASTEROID_TURN_SPEED * dt
         match(self.type):
             case 0: 
                 self.color = (0,255,0)
@@ -36,11 +38,20 @@ class Asteroid(CircleShape):
         self.hit -= dt
 
     def get_hit(self):
-        self.hit = 0.4
+        if self.hit > 0:
+            return
+        self.hit = 0.2
         self.lifes -= 1
 
-    def split(self):
+
+    def split(self,screen):
         self.kill()
+        explosion = Particles(self.position[0],self.position[1],self.radius,pygame.image.load("images/explosion.png"))
+        sfx = pygame.mixer.Sound("sounds/explosion.mp3")
+        sfx.set_volume(float(self.radius / 500))
+        sfx.play()
+        sfx.fadeout(1000)
+        explosion.draw(screen)
         if self.radius <= ASTEROID_MIN_RADIUS:
             return
         else:

@@ -19,6 +19,7 @@ class Player(CircleShape):
         self.lives = 3
         self.hit = 0
         self.hitbox = self.triangle()
+        self.contact_damage = 1
     # in the player class
     def triangle(self):
         forward = pygame.Vector2(0, 1).rotate(self.rotation)
@@ -82,6 +83,9 @@ class Player(CircleShape):
     def shoot(self):
         shot = Shot(self.position[0],self.position[1])
         shot.velocity = pygame.Vector2(0,1).rotate(self.rotation) * PLAYER_SHOOT_SPEED
+
+    def tackle(self):
+        shot = Shot(self.position[0] - (self.radius/2), self.position[1] - (self.radius/2),300)
 
     def get_hit(self):
         self.lives -= 1
