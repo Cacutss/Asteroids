@@ -6,6 +6,8 @@ from shot import Shot
 
 from constants import *
 
+from items.shield import Shield
+
 import random
 
 class Player(CircleShape):
@@ -20,6 +22,8 @@ class Player(CircleShape):
         self.hit = 0
         self.hitbox = self.triangle()
         self.contact_damage = 1
+        self.items = []
+
     # in the player class
     def triangle(self):
         forward = pygame.Vector2(0, 1).rotate(self.rotation)
@@ -50,6 +54,8 @@ class Player(CircleShape):
         return False
 
     def update(self, dt):
+        for item in self.items:
+            item.position = self.position
         self.hitbox = self.triangle()
         self.timer -= dt
         self.iframes -= dt
@@ -78,7 +84,18 @@ class Player(CircleShape):
         if self.acceleration > PLAYER_MAX_ACCELERATION:
             return
         else:  
-            self.acceleration += 0.001 
+            self.acceleration += dt / 10
+
+    def acquire(self,item):
+        for i in self.items:
+            if isinstance(i,type(item)):
+                i.copies += 1
+                i.acquire()
+                item.kill()
+                return
+        item.acquire()
+        item.acquired = 1
+        self.items.append(item)
 
     def shoot(self):
         shot = Shot(self.position[0],self.position[1])
@@ -91,3 +108,4 @@ class Player(CircleShape):
         self.lives -= 1
         self.acceleration = 0.5
         self.iframes = PLAYER_FRAMES
+

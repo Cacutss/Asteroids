@@ -2,6 +2,7 @@ from asteroid import Asteroid
 from constants import *
 import random
 random.seed()
+
 def wrap(thing):
     lucky = 2
     if isinstance(thing,Asteroid):
