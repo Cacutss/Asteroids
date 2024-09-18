@@ -1,29 +1,28 @@
 import pygame
 from constants import *
 from player import Player
-from asteroid import Asteroid
+from enemies.asteroid import Asteroid
 from asteroidfield import AsteroidField
 from shot import Shot
 from score import Score
 from particles import Particles
-from boss import Boss
+from enemies.boss import Boss
 from timer import Timer
 from store import Store
 from items.shield import Shield
 from wrapper import wrap
-import time
 import sys
 import random
 
 class Game:
     def __init__(self):
         self.gameStateManager = GameStateManager('level')
+        self.statebefore = self.gameStateManager.get_state()
         self.loop = True
         self.timer = Timer()
         self.clock = pygame.time.Clock()
         self.fps = 60
         self.dt = 0
-        self.time = time.time()
         self.screen = pygame.display.set_mode((SCREEN_WIDTH,SCREEN_HEIGHT),pygame.FULLSCREEN,pygame.SCALED)
         Game.drawable = pygame.sprite.Group()
         Game.updatable = pygame.sprite.Group()
@@ -41,7 +40,8 @@ class Game:
         Timer.containers = (Game.drawable,Game.updatable)
         Shot.containers = (Game.updatable,Game.drawable,Game.shots)
         self.level = Level(self.screen,self.gameStateManager)
-        self.states = {'level':self.level}
+        self.menu = Menu(self.screen,self.gameStateManager)
+        self.states = {'level':self.level, "menu":self.menu}
     
     def run(self):
         while(self.loop):
@@ -50,14 +50,22 @@ class Game:
                 if event.type == pygame.QUIT:
                     pygame.quit()
                     sys.exit()
-            pygame.Surface.fill(self.screen,(15,15,15))
+                if event.type == pygame.KEYDOWN:
+                    if event.key == pygame.K_ESCAPE:
+                        if self.gameStateManager.get_state() == "menu":
+                            self.gameStateManager.currentState = self.statebefore
+                        else:
+                            self.statebefore = self.gameStateManager.get_state()
+                            self.gameStateManager.currentState = "menu"
+            pygame.Surface.fill(self.screen,(15, 15, 15))
             self.states[self.gameStateManager.get_state()].run()
-            for thing in self.wrappable:
-                wrap(thing)
-            self.update()
-            self.draw()
-            self.timer.update(self.dt)
-            self.timer.draw(self.screen)
+            if not self.gameStateManager.get_state() == "menu":
+                for thing in self.wrappable:
+                    wrap(thing)
+                self.update()
+                self.draw()
+                self.timer.update(self.dt)
+                self.timer.draw(self.screen)
             pygame.display.flip()
     def draw(self):
         for thing in self.drawable:
@@ -78,11 +86,9 @@ class Level:
         self.hearth = pygame.transform.scale(pygame.image.load("images/hearth.png"),(100,100))
         self.spawner = AsteroidField()
         self.player = Player(x = SCREEN_WIDTH/2,y = SCREEN_HEIGHT/2)
-        self.shield = Shield(random.randint(100,SCREEN_WIDTH-100),random.randint(100,SCREEN_HEIGHT-100))
-        self.shield2 = Shield(random.randint(100,SCREEN_WIDTH-100),random.randint(100,SCREEN_HEIGHT-100))
 
     def run(self):
-        if self.player.lives == 0:
+        if self.player.lives <= 0:
             print("!GAME OVER!")
             quit()
             sys.exit()
@@ -92,7 +98,6 @@ class Level:
         for item in Game.items:
             if not self.player.CheckCollision(item) and item.acquired == 0:
                 self.player.acquire(item)
-                print(self.player.items)
         for asteroid in Game.asteroids:
             if not self.player.CheckCollision(asteroid) and self.player.iframes <= 0:
                 self.player.get_hit()
@@ -100,25 +105,25 @@ class Level:
             for item in self.player.items:
                 if not isinstance(item,Shield) or len(item.groups()) == 0:
                     continue
-                if item.CheckCollision(asteroid,self.screen):
+                if item.CheckCollision(asteroid):
                     self.score.update(asteroid)
             for shot in Game.shots:
-                if shot.CheckCollision(asteroid):
-                    if asteroid.lifes >= 1:
-                        asteroid.get_hit()
-                        shot.kill()
-                    else:
-                        self.score.update(asteroid)
-                        shot.kill()
-                        asteroid.split(self.screen)
-
+                if all(shot.CheckCollision(asteroid)):
+                    self.score.update(asteroid)
+                shot.CheckCollision(self.player)
 class Menu:
     def __init__(self,screen,gameStateManager):
         self.screen = screen
         self.gameStateManager = gameStateManager
+        self.font = pygame.font.Font("fonts/Retro Gaming.ttf",60)
+        self.title = "Asteroids"
     
     def run(self):
-        pass
+        self.draw_text(screen=self.screen,text=self.title,x=(SCREEN_WIDTH/2),y=(SCREEN_HEIGHT/5))
+
+    def draw_text(self,screen,text,x,y):
+        button = self.font.render(text,True,(255,255,255))
+        screen.blit(button,(x - button.get_width()/2,y - button.get_height()))
 
 class GameStateManager:
     def __init__(self,currentState):

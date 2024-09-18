@@ -2,8 +2,6 @@ import pygame
 
 from circleshape import CircleShape
 
-from shot import Shot
-
 from constants import *
 
 from items.shield import Shield
@@ -22,6 +20,8 @@ class Player(CircleShape):
         self.hit = 0
         self.hitbox = self.triangle()
         self.contact_damage = 1
+        self.image = pygame.image.load("images/ship.png")
+        self.ready = pygame.transform.scale(self.image,(self.radius*2,self.radius*2))
         self.items = []
 
     # in the player class
@@ -34,10 +34,12 @@ class Player(CircleShape):
         return [a, b, c]
     
     def draw(self,screen):
-        if self.hit == 1 and random.randint(0,10) > 5:
-            pygame.draw.polygon(surface=screen,color=(10,10,10),points=self.triangle(),width=2)
-        else:
-            pygame.draw.polygon(surface=screen,color=(255,255,255),points=self.triangle(),width=2)
+        image = pygame.transform.rotate(self.ready,-self.rotation)
+        screen.blit(image,(self.position[0] - int(image.get_width()) / 2, self.position[1] - int(image.get_height()) / 2))
+        #if self.hit == 1 and random.randint(0,10) > 5:
+            #pygame.draw.polygon(surface=screen,color=(10,10,10),points=self.triangle(),width=2)
+        #else:
+            #pygame.draw.polygon(surface=screen,color=(255,255,255),points=self.triangle(),width=2)
 
     def rotate(self,dt):
         self.rotation += PLAYER_TURN_SPEED * dt
@@ -88,7 +90,7 @@ class Player(CircleShape):
 
     def acquire(self,item):
         for i in self.items:
-            if isinstance(i,type(item)):
+            if isinstance(i,type(item)) and i.timer > 0:
                 i.copies += 1
                 i.acquire()
                 item.kill()
@@ -105,7 +107,10 @@ class Player(CircleShape):
         shot = Shot(self.position[0] - (self.radius/2), self.position[1] - (self.radius/2),300)
 
     def get_hit(self):
+        if self.iframes > 0:
+            return
         self.lives -= 1
         self.acceleration = 0.5
         self.iframes = PLAYER_FRAMES
 
+from shot import Shot

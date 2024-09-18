@@ -1,17 +1,16 @@
 import pygame
 from circleshape import CircleShape
-from asteroid import Asteroid
 from constants import *
 
 class Shield(CircleShape):
     def __init__(self,x,y):
-        super().__init__(x,y,66)
+        super().__init__(x,y,50)
         self.timer = 5
         self.image = pygame.image.load("images/shield.png")
-        self.size = 100
+        self.size = 50
         self.acquired = 0
         self.timer = 5
-        self.color = (50,50,50)
+        self.color = (0,0,50)
         self.copies = 0
     
     def draw(self,screen):
@@ -22,12 +21,12 @@ class Shield(CircleShape):
             if self.timer >= 0.5:
                 pygame.draw.circle(screen,self.color,center=self.position,radius=self.radius,width=3)
     
-    def CheckCollision(self,entity:Asteroid,screen):
+    def CheckCollision(self,entity):
         if super().CheckCollision(entity):
             if entity.lifes > 0:
                 entity.get_hit()
             else:
-                entity.split(screen)
+                entity.split()
                 return True
             
     def acquire(self):
@@ -37,7 +36,8 @@ class Shield(CircleShape):
     def update(self,dt):
         if self.acquired == 1:
             self.timer -= dt
-            self.color = (int(50*self.timer),int(50*self.timer),int(50*self.timer))
+            self.color = (int(20*self.timer),int(20*self.timer),int(50*self.timer))
             if self.timer <= 0:
                 self.kill()
-        
+
+from enemies.asteroid import Asteroid

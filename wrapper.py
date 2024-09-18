@@ -1,4 +1,4 @@
-from asteroid import Asteroid
+from enemies.asteroid import Asteroid
 from constants import *
 import random
 random.seed()

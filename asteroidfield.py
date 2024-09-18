@@ -1,6 +1,8 @@
 import pygame
 import random
-from asteroid import Asteroid
+from enemies.asteroid import Asteroid
+from enemies.fast_asteroid import Fast_Asteroid
+from enemies.shooter_asteroid import Shooter_Asteroid
 from constants import *
 random.seed()
 
@@ -35,14 +37,22 @@ class AsteroidField(pygame.sprite.Sprite):
     def spawn(self, radius, position, velocity,timer):
         if random.randint(0,100) < 4:
             x,y = self.set_good_spawn(position.x,position.y,ASTEROID_GIANT_RADIUS)
-            asteroid = Asteroid(x,y, ASTEROID_GIANT_RADIUS,5)
+            asteroid = Asteroid(x,y, ASTEROID_GIANT_RADIUS,5,kind=3)
             asteroid.velocity = velocity / 2
         x,y = self.set_good_spawn(position.x,position.y,radius)
-        asteroid = Asteroid(x,y,radius)
         if random.randint(0,100) + (timer * 0.01) > 90:
-            asteroid.velocity = velocity * 5
-            asteroid.type = 1
+            kind = random.randint(1,5)
+            match(kind):
+                case 1:    
+                    asteroid = Fast_Asteroid(x,y,radius)
+                    asteroid.velocity = velocity * 5
+                    asteroid.type = 1
+                case 2:
+                    asteroid = Shooter_Asteroid(x,y,radius)
+                    asteroid.velocity = velocity * 5
+                    asteroid.type = 1
         else:
+            asteroid = Asteroid(x,y,radius)
             asteroid.velocity = velocity 
     
     def set_good_spawn(self,x,y,radius):

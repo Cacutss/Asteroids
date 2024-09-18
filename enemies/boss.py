@@ -1,6 +1,6 @@
 import pygame
 from constants import *
-from asteroid import Asteroid
+from enemies.asteroid import Asteroid
 
 class Boss(Asteroid):
     def __init__(self,x = SCREEN_WIDTH/2, y = -SCREEN_WIDTH/2, radius = SCREEN_WIDTH/2, lifes = 100,color = (240,0,0),type=2):
@@ -13,5 +13,10 @@ class Boss(Asteroid):
 
     def update(self,dt):
         self.position[1] += self.speed *dt
-        super().update(dt)
+        self.color = (255,0,0)
+        if self.hit >= 0:
+            self.color = (100,100,100)
+        self.timer -= dt
+        self.hit -= dt
+        
      

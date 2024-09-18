@@ -1,6 +1,6 @@
 import pygame
 from constants import *
-from asteroid import Asteroid
+from enemies.asteroid import Asteroid
 
 class Score(pygame.font.Font):
     def __init__(self):
